@@ -47,7 +47,7 @@ def carr_madan_price(
 
     psi = np.zeros(n_fft, dtype=complex) # dampened integrand
     shifted_omega = omega - (alpha+1) * 1j
-    phi = heston_char_fn(shifted_omega, params, S, r, q, T)
+    phi = heston_char_fn(shifted_omega, params, 1.0, r, q, T)
     denom = alpha**2 + alpha - omega**2 +1j*(2*alpha +1)*omega
     psi = w * np.exp(-r * T) * phi / denom * np.exp(1j * omega * b)
 
@@ -58,7 +58,7 @@ def carr_madan_price(
     k_grid = log_strikes
     multiplier = np.exp(-alpha * k_grid)/np.pi
     prices = multiplier*np.real(fft_vals)
-    prices = np.clip(prices, 0, None)
+    prices = np.clip(prices, 0, None) * S
 
     strikes = np.exp(k_grid)
     return strikes, prices

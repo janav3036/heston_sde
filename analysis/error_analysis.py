@@ -8,7 +8,7 @@ from models.black_scholes import implied_vol
 def _model_ivs(params: HestonParams, data: MarketData, expiry_idx: int) -> np.ndarray:
     T = data.expiries[expiry_idx]
     strikes_fft, prices_fft = carr_madan_price(params, data.S, data.r, data.q, T)
-    model_prices = price_at_strikes(strikes_fft, prices_fft, data.strikes)
+    model_prices = price_at_strikes(strikes_fft * data.S, prices_fft, data.strikes)
     return implied_vol(model_prices, data.S, data.strikes, data.r, data.q, T)
 
 

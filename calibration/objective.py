@@ -8,7 +8,7 @@ def heston_rmse(params: HestonParams, data: MarketData) -> float:
     errors = []
     for i, T in enumerate(data.expiries):
         strikes_fft, prices_fft = carr_madan_price(params, data.S, data.r, data.q, T)
-        model_prices = price_at_strikes(strikes_fft, prices_fft, data.strikes)
+        model_prices = price_at_strikes(strikes_fft * data.S, prices_fft, data.strikes)
         model_ivs = implied_vol(model_prices, data.S, data.strikes, data.r, data.q, T)
 
         market_ivs = data.market_ivs[i]

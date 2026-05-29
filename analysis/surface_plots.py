@@ -17,7 +17,7 @@ def plot_smile(
     market_ivs = data.market_ivs[expiry_idx]
 
     strikes_fft, prices_fft = carr_madan_price(params, data.S, data.r, data.q, T)
-    model_prices = price_at_strikes(strikes_fft, prices_fft, data.strikes)
+    model_prices = price_at_strikes(strikes_fft * data.S, prices_fft, data.strikes)
     model_ivs = implied_vol(model_prices, data.S, data.strikes, data.r, data.q, T)
 
     moneyness = data.strikes / data.S
