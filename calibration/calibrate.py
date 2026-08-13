@@ -3,17 +3,17 @@ from scipy.optimize import differential_evolution
 from models import HestonParams, MarketData, CalibrationResult
 from calibration.objective import heston_rmse
 
-FIXED_KAPPA = 2.0
-FIXED_THETA = 0.04
-
 PARAM_BOUNDS = [
-    (1e-4, 1.0),   # v0
-    (0.01, 2.0),   # sigma
-    (-0.99, 0.99), # rho
+    (1e-4, 1.0),    # v0
+    (0.5,  5.0),   # kappa
+    (1e-4, 1.0),    # theta
+    (0.01, 5.0),    # sigma  (widened from 2.0)
+    (-0.99, 0.99),  # rho
 ]
-def calibrate(data: MarketData, kappa: float = FIXED_KAPPA, theta: float = FIXED_THETA, n_restarts: int = 3, seed: int = 42) -> CalibrationResult:
+
+def calibrate(data: MarketData, n_restarts: int = 3, seed: int = 42) -> CalibrationResult:
     def objective(x):
-        params = HestonParams(v0=x[0], kappa=kappa, theta=theta, sigma=x[1], rho=x[2])
+        params = HestonParams(v0=x[0], kappa=x[1], theta=x[2], sigma=x[3], rho=x[4])
 
         try:
             return heston_rmse(params, data)
@@ -34,7 +34,7 @@ def calibrate(data: MarketData, kappa: float = FIXED_KAPPA, theta: float = FIXED
             best_result = result
 
     x = best_result.x
-    params = HestonParams(v0=x[0], kappa=kappa, theta=theta, sigma=x[1], rho=x[2])
+    params = HestonParams(v0=x[0], kappa=x[1], theta=x[2], sigma=x[3], rho=x[4])
 
     return CalibrationResult(
         params=params, 

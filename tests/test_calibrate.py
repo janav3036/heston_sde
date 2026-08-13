@@ -27,12 +27,12 @@ def _make_synthetic_data(params: HestonParams) -> MarketData:
 
 def test_calibrate_low_rmse():
     data = _make_synthetic_data(TRUE_PARAMS)
-    result = calibrate(data, kappa=TRUE_PARAMS.kappa, theta=TRUE_PARAMS.theta)
+    result = calibrate(data)
     assert result.rmse < 0.005
 
 def test_calibrate_result_fields():
     data = _make_synthetic_data(TRUE_PARAMS)
-    result = calibrate(data, kappa=TRUE_PARAMS.kappa, theta=TRUE_PARAMS.theta)
+    result = calibrate(data)
     assert hasattr(result, "params")
     assert hasattr(result, "rmse")
     assert hasattr(result, "success")
@@ -51,4 +51,13 @@ def test_estimate_from_spot_reasonable():
     assert 0 < params.sigma
     assert -1 < params.rho < 1
 
+def test_calibrate_recovers_params():
+    data = _make_synthetic_data(TRUE_PARAMS)
+    result = calibrate(data)
+    p = result.params
+    assert abs(p.v0    - TRUE_PARAMS.v0)    < 0.01,  f"v0 off: {p.v0:.4f}"
+    assert abs(p.kappa - TRUE_PARAMS.kappa) < 1.0,   f"kappa off: {p.kappa:.4f}"
+    assert abs(p.theta - TRUE_PARAMS.theta) < 0.01,  f"theta off: {p.theta:.4f}"
+    assert abs(p.sigma - TRUE_PARAMS.sigma) < 0.1,   f"sigma off: {p.sigma:.4f}"
+    assert abs(p.rho   - TRUE_PARAMS.rho)   < 0.1,   f"rho off: {p.rho:.4f}"
 

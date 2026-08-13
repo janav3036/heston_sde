@@ -3,6 +3,7 @@ from models import HestonParams, MarketData
 from models.heston_fft import carr_madan_price, price_at_strikes
 from models.black_scholes import implied_vol
 
+FELLER_PENALTY = 0.1
 
 def heston_rmse(params: HestonParams, data: MarketData) -> float:
     errors = []
@@ -17,4 +18,7 @@ def heston_rmse(params: HestonParams, data: MarketData) -> float:
         errors.append(diff)
 
     all_errors = np.concatenate(errors)
-    return float(np.sqrt(np.mean(all_errors**2)))
+    rmse = float(np.sqrt(np.mean(all_errors**2)))
+
+    feller_violation = max(0.0, params.sigma**2 - 2 * params.kappa * params.theta)
+    return rmse + FELLER_PENALTY * feller_violation

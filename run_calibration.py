@@ -23,10 +23,12 @@ def main():
     print(f"  Init: {init}")
     
     print("Calibrating...")
-    result = calibrate(data, kappa=init.kappa, theta=init.theta)
+    result = calibrate(data)
     print(f"    RMSE : {result.rmse:.6f}")
     print(f"    Params : {result.params}")
     print(f"    Feller satisfied: {result.params.feller_satisfied()}")
+    print(f"    Spot estimate: {init}")
+
 
     print("\nSummary Table:")
     print(summary_table(result.params, data).to_string(index=False))
